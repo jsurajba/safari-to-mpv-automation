@@ -205,7 +205,12 @@ def focus_safari():
     except Exception:
         pass
 
-def play_safari_video(video_id):
+def play_safari_video(video_id, timestamp=None):
+    if timestamp is not None and isinstance(timestamp, (int, float)):
+        js = f"document.querySelectorAll('video').forEach(v => {{ v.currentTime = {timestamp}; v.play(); }});"
+    else:
+        js = "document.querySelectorAll('video').forEach(v => v.play());"
+        
     applescript = f'''
     if application "Safari" is running then
         tell application "Safari"
@@ -214,7 +219,7 @@ def play_safari_video(video_id):
                     try
                         set tabURL to URL of t
                         if tabURL contains "{video_id}" then
-                            tell t to do JavaScript "document.querySelectorAll('video').forEach(v => v.play());"
+                            tell t to do JavaScript "{js}"
                         end if
                     end try
                 end repeat
@@ -461,6 +466,7 @@ def main():
     stall_ticks = 0
     load_ticks = 0
     frame_drop_history = []
+    last_time_pos = 0.0
     
     while True:
         try:
@@ -511,6 +517,7 @@ def main():
                     load_ticks = 0
                     stall_ticks = 0
                     frame_drop_history = []
+                    last_time_pos = 0.0
                 else:
                     # Same video ID.
                     if not playback_started:
@@ -524,7 +531,7 @@ def main():
                                 current_video_id = None
                                 playback_started = False
                                 focus_safari()
-                                play_safari_video(video_id)
+                                play_safari_video(video_id, 0.0)
                                 continue
                                 
                             time_pos = mpv.get_playback_time()
@@ -538,12 +545,14 @@ def main():
                                 # Switch window to focus mpv
                                 focus_mpv()
                                 playback_started = True
+                                last_time_pos = time_pos
                         else:
                             logger.info("mpv was closed before playback started. Resetting state, blacklisting, and focusing Safari.")
                             blacklisted_video_ids.add(video_id)
                             current_video_id = None
                             playback_started = False
                             focus_safari()
+                            play_safari_video(video_id, 0.0)
                     else:
                         # Playback already started.
                         if mpv.is_running():
@@ -557,7 +566,7 @@ def main():
                                     current_video_id = None
                                     playback_started = False
                                     focus_safari()
-                                    play_safari_video(video_id)
+                                    play_safari_video(video_id, last_time_pos)
                                     continue
                             else:
                                 stall_ticks = 0
@@ -578,14 +587,20 @@ def main():
                                         current_video_id = None
                                         playback_started = False
                                         focus_safari()
-                                        play_safari_video(video_id)
+                                        play_safari_video(video_id, last_time_pos)
                                         continue
+                                        
+                            # 3. Save playback time for resume
+                            time_pos = mpv.get_playback_time()
+                            if time_pos is not None and isinstance(time_pos, (int, float)):
+                                last_time_pos = time_pos
                         else:
-                            logger.info("mpv was closed. Resetting state, blacklisting, and focusing Safari.")
+                            logger.info(f"mpv was closed. Resetting state, blacklisting, focusing Safari, and resuming at {last_time_pos:.2f}s.")
                             blacklisted_video_ids.add(video_id)
                             current_video_id = None
                             playback_started = False
                             focus_safari()
+                            play_safari_video(video_id, last_time_pos)
             else:
                 # Not a YouTube video URL in Safari's active tab.
                 if current_video_id:
