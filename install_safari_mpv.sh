@@ -39,14 +39,14 @@ else
 fi
 
 # Define paths
-APP_DIR="/Users/jaredsurajballi/Library/Application Support/SafariMpv"
-LAUNCH_AGENTS_DIR="/Users/jaredsurajballi/Library/LaunchAgents"
+APP_DIR="$HOME/Library/Application Support/SafariMpv"
+LAUNCH_AGENTS_DIR="$HOME/Library/LaunchAgents"
 PLIST_NAME="com.user.safari-mpv.plist"
 DAEMON_NAME="safari_mpv_daemon.py"
 
 echo "Creating application directory..."
 mkdir -p "$APP_DIR"
-mkdir -p "/Users/jaredsurajballi/Library/Logs/SafariMpv"
+mkdir -p "$HOME/Library/Logs/SafariMpv"
 
 echo "Copying files..."
 # Check if the files exist in the current folder before copying
@@ -60,7 +60,8 @@ else
 fi
 
 if [ -f "$PLIST_NAME" ]; then
-    cp "$PLIST_NAME" "$LAUNCH_AGENTS_DIR/$PLIST_NAME"
+    PYTHON_PATH=$(which python3 || echo "/opt/homebrew/bin/python3")
+    sed -e "s|{{HOME}}|$HOME|g" -e "s|{{PYTHON_PATH}}|$PYTHON_PATH|g" "$PLIST_NAME" > "$LAUNCH_AGENTS_DIR/$PLIST_NAME"
 elif [ -f "$LAUNCH_AGENTS_DIR/$PLIST_NAME" ]; then
     echo "LaunchAgent plist already exists in LaunchAgents directory."
 else

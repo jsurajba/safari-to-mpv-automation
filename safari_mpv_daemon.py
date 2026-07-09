@@ -19,8 +19,9 @@ for p in extra_paths:
 os.environ["PATH"] = os.pathsep.join(paths)
 
 # Path configuration
-APP_DIR = "/Users/jaredsurajballi/Library/Application Support/SafariMpv"
-LOG_DIR = "/Users/jaredsurajballi/Library/Logs/SafariMpv"
+HOME = os.path.expanduser("~")
+APP_DIR = os.path.join(HOME, "Library/Application Support/SafariMpv")
+LOG_DIR = os.path.join(HOME, "Library/Logs/SafariMpv")
 LOG_FILE = os.path.join(LOG_DIR, "daemon.log")
 SOCKET_PATH = "/tmp/mpv-safari.sock"
 

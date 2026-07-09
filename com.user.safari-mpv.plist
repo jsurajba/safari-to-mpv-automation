@@ -6,8 +6,8 @@
     <string>com.user.safari-mpv</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/opt/homebrew/bin/python3</string>
-        <string>/Users/jaredsurajballi/Library/Application Support/SafariMpv/safari_mpv_daemon.py</string>
+        <string>{{PYTHON_PATH}}</string>
+        <string>{{HOME}}/Library/Application Support/SafariMpv/safari_mpv_daemon.py</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
@@ -19,8 +19,8 @@
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     </dict>
     <key>StandardOutPath</key>
-    <string>/Users/jaredsurajballi/Library/Logs/SafariMpv/launchd_stdout.log</string>
+    <string>{{HOME}}/Library/Logs/SafariMpv/launchd_stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/jaredsurajballi/Library/Logs/SafariMpv/launchd_stderr.log</string>
+    <string>{{HOME}}/Library/Logs/SafariMpv/launchd_stderr.log</string>
 </dict>
 </plist>

@@ -3,10 +3,10 @@
 echo "=== Safari-to-MPV Automation Uninstaller ==="
 
 # Define paths
-APP_DIR="/Users/jaredsurajballi/Library/Application Support/SafariMpv"
-LAUNCH_AGENTS_DIR="/Users/jaredsurajballi/Library/LaunchAgents"
+APP_DIR="$HOME/Library/Application Support/SafariMpv"
+LAUNCH_AGENTS_DIR="$HOME/Library/LaunchAgents"
 PLIST_PATH="$LAUNCH_AGENTS_DIR/com.user.safari-mpv.plist"
-LOG_DIR="/Users/jaredsurajballi/Library/Logs/SafariMpv"
+LOG_DIR="$HOME/Library/Logs/SafariMpv"
 
 echo "Unloading LaunchAgent..."
 USER_ID=$(id -u)
